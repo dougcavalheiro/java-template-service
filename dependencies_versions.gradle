@@ -1,0 +1,46 @@
+ext {
+    versions = [
+            guice: '5.0.1',
+            vertx: '3.8.5',
+            slf4j: '1.7.36',
+            lombok: '1.18.22',
+            rxjava2: '2.2.21',
+            typesafeConfig    : "1.4.2",
+            micrometer: '1.8.3',
+            micrometerJvmExtras: '0.2.2',
+            viafouraJavaCommon: "v9.3.1",
+            log4j             : "2.17.2",
+            mockito           : "4.8.0",
+            junit5            : "5.9.0",
+            kafka: '2.4.0',
+    ]
+    libs = [
+            guice: "com.google.inject:guice:${versions.guice}",
+            vertxCore: "io.vertx:vertx-core:${versions.vertx}",
+            vertxRxjava2: "io.vertx:vertx-rx-java2:${versions.vertx}",
+            vertxMetrics                    : "io.vertx:vertx-micrometer-metrics:${versions.vertx}",
+            vertxWeb                        : "io.vertx:vertx-web:${versions.vertx}",
+            vertxWebApiContract             : "io.vertx:vertx-web-api-contract:${versions.vertx}",
+            slf4jApi: "org.slf4j:slf4j-api:${versions.slf4j}",
+            lombok: "org.projectlombok:lombok:${versions.lombok}",
+            rxjava2: "io.reactivex.rxjava2:rxjava:${versions.rxjava2}",
+            typesafeConfig                  : "com.typesafe:config:${versions.typesafeConfig}",
+
+            micrometerCore                  : "io.micrometer:micrometer-core:${versions.micrometer}",
+            micrometerJmxRegistry           : "io.micrometer:micrometer-registry-jmx:${versions.micrometer}",
+            micrometerPrometheusRegistry    : "io.micrometer:micrometer-registry-prometheus:${versions.micrometer}",
+            micrometerJvmExtras             : "io.github.mweirauch:micrometer-jvm-extras:${versions.micrometerJvmExtras}",
+            micrometerStatsdRegistry        : "io.micrometer:micrometer-registry-statsd:${versions.micrometer}",
+            viafouraCommonVertx       : "com.viafoura.common:vertx:${versions.viafouraJavaCommon}",
+            viafouraCommonFramework   : "com.viafoura.common:service-framework:${versions.viafouraJavaCommon}",
+            viafouraCommonVertxKafka: "com.viafoura.common:vertx-kafka:${versions.viafouraJavaCommon}",
+
+            kafkaClients: "org.apache.kafka:kafka-clients:${versions.kafka}",
+            kafkaStreams: "org.apache.kafka:kafka-streams:${versions.kafka}",
+
+
+            junitJupiter                    : "org.junit.jupiter:junit-jupiter:${versions.junit5}",
+            mockito                         : "org.mockito:mockito-junit-jupiter:${versions.mockito}",
+
+    ]
+}

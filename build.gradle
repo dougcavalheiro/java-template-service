@@ -1,0 +1,120 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://vf-maven-pub.s3.amazonaws.com/snapshots' }
+        maven { url 'https://vf-maven-pub.s3.amazonaws.com/release' }
+    }
+    dependencies {
+        classpath 'com.viafoura.plugins:gradle-plugins:v5.0.2'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'jacoco'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.github.spotbugs' version '5.0.6'
+}
+
+// apply plugin: 'com.viafoura.plugins.vfpipe-version'
+
+allprojects {
+    group = 'com.viafoura.template.microservice'
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
+    repositories {
+        mavenCentral()
+    }
+
+    apply from: "$rootDir/dependencies_versions.gradle"
+    apply plugin: 'com.viafoura.plugins.aws-repository'
+
+    tasks.withType(Test) {
+        useJUnitPlatform {
+        }
+        reports {
+            junitXml.required = true
+            html.required = false
+        }
+    }
+
+    // In debian containers, ASCII is the default encoding for java files. We have some unit tests that verify unicode
+    // characters work in REF. That's why we have to explicitly set the encoding here.
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    // exclude random logging backends. we only want log4j2
+    configurations.all {
+        exclude module: 'slf4j-simple'
+        exclude module: 'logback-classic'
+        exclude module: 'slf4j-log4j12'
+        // there are some apps that use log4j1 without a facade
+        // for those we have a compile dependency later with an api bridge to log4j2
+        exclude module: 'log4j'
+
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.apache.logging.log4j') {
+                details.useVersion versions.log4j
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation libs.guice
+    implementation libs.vertxCore
+    implementation libs.vertxMetrics
+    implementation libs.vertxRxjava2
+    implementation libs.slf4jApi
+    implementation libs.lombok
+    implementation libs.rxjava2
+    implementation libs.typesafeConfig
+    implementation libs.micrometerCore
+    implementation libs.micrometerJmxRegistry
+    implementation libs.micrometerPrometheusRegistry
+    implementation libs.micrometerJvmExtras
+    implementation libs.micrometerStatsdRegistry
+    implementation libs.viafouraCommonVertx
+    implementation libs.vertxWeb
+    implementation libs.vertxWebApiContract
+    implementation libs.viafouraCommonFramework
+    implementation libs.viafouraCommonVertxKafka
+    implementation libs.kafkaClients
+    implementation libs.kafkaStreams
+
+    annotationProcessor libs.lombok
+
+    testImplementation libs.mockito
+    testImplementation libs.junitJupiter
+}
+
+setMainClassName('com.viafoura.template.microservice.infra.runner.ApplicationLauncher')
+
+run {
+    args = ['run', 'com.viafoura.template.microservice.infra.runner.verticle.MainVerticle']
+}
+
+shadowJar {
+    setArchivesBaseName('moderation-orchestrator-service')
+    setArchiveClassifier('fat')
+
+    manifest {
+        attributes(
+                'Main-Verticle': 'com.viafoura.template.microservice.infra.runner.verticle.MainVerticle',
+                'Main-Class': 'com.viafoura.template.microservice.infra.runner.ApplicationLauncher',
+                'Class-Path': '../conf/',
+                'Multi-Release': 'true'
+        )
+    }
+
+    mergeServiceFiles {
+        include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+    }
+    // https://stackoverflow.com/questions/48033792/log4j2-error-statuslogger-unrecognized-conversion-specifier/
+    transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer)
+
+    zip64 true
+}
