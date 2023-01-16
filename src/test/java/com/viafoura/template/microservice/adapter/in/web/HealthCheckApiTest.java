@@ -10,8 +10,8 @@ import org.junit.jupiter.api.*;
 class HealthCheckApiTest {
 
     private final HealthCheckUseCase healthCheckUseCase = mock(HealthCheckUseCase.class);
-    private final int API_RESPONSE_NO_CONTENT = 204;
-    private final int API_RESPONSE_SERVICE_UNAVAILABLE = 503;
+    private static final int API_RESPONSE_NO_CONTENT = 204;
+    private static final int API_RESPONSE_SERVICE_UNAVAILABLE = 503;
     private HealthCheckApi healthCheckApi;
 
     @BeforeEach

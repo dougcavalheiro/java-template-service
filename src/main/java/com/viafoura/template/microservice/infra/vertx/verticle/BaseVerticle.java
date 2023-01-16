@@ -11,7 +11,6 @@ import com.viafoura.template.microservice.infra.metric.MetricsPlatforms;
 import com.viafoura.template.microservice.infra.metric.MicrometerRegistryFactory;
 import com.viafoura.template.microservice.infra.vertx.error.RoutingErrorHandler;
 import com.viafoura.template.microservice.infra.vertx.security.SecuritySchemaType;
-import com.viafoura.template.microservice.infra.vertx.security.TokenSecurityHandler;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.vertx.core.AbstractVerticle;
@@ -35,7 +34,6 @@ abstract class BaseVerticle extends AbstractVerticle {
 
     private HttpServer httpServer;
     private ServiceConnectorRegistry serviceConnectorRegistry;
-    private TokenSecurityHandler tokenSecurityHandler;
 
     @Override
     public void start(Promise<Void> promise) {
@@ -99,16 +97,14 @@ abstract class BaseVerticle extends AbstractVerticle {
 
     private void addSecurityHandlers(OpenAPI3RouterFactory factory) {
         factory.addSecurityHandler(SecuritySchemaType.TOKEN_IN_COOKIE.getName(), RoutingContext::next);
-        factory.addSecurityHandler(SecuritySchemaType.TOKEN_IN_COOKIE.getName(), tokenSecurityHandler);
         factory.addSecurityHandler(SecuritySchemaType.TOKEN.getName(), RoutingContext::next);
-        factory.addSecurityHandler(SecuritySchemaType.TOKEN.getName(), tokenSecurityHandler);
     }
 
     private void addPrometheusMetricsHandler(OpenAPI3RouterFactory factory) {
         Optional<MeterRegistry> meterRegistry = MicrometerRegistryFactory.findRegistryByPlatform(MetricsPlatforms.PROMETHEUS);
 
-        if (meterRegistry.isPresent()) {
-            PrometheusMeterRegistry prometheusMeterRegistry = (PrometheusMeterRegistry) meterRegistry.get();
+        if (meterRegistry.isPresent()
+                && meterRegistry.get() instanceof PrometheusMeterRegistry prometheusMeterRegistry) {
             factory.addHandlerByOperationId("metrics",
                     context -> context.response().end(prometheusMeterRegistry.scrape()));
         } else {

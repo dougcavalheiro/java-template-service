@@ -21,7 +21,7 @@ public class AppConfig implements VertxConfig, StreamConfig {
 
     @Inject
     public AppConfig(Config config) {
-        this.serverPort = config.getInt("template.service.server.port");
+        this.serverPort = config.getInt("service.server.port");
         this.incomingTopics = config.getStringList("kafka.topic.incoming");
         this.outgoingTopics = config.getStringList("kafka.topic.outgoing");
         this.namespace = config.getString("kafka.namespace");

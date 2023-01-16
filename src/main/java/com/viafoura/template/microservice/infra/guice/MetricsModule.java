@@ -8,9 +8,9 @@ import javax.inject.Singleton;
 
 public class MetricsModule extends AbstractModule {
 
-    @Provides
-    @Singleton
-    public MeterRegistry provideMeterRegistry() {
-        return MicrometerRegistryFactory.get();
+    @Override
+    protected void configure() {
+        super.configure();
+        bind(MeterRegistry.class).toInstance(MicrometerRegistryFactory.get());
     }
 }

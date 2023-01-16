@@ -14,12 +14,15 @@ plugins {
     id 'application'
     id 'jacoco'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'com.github.spotbugs' version '5.0.6'
+    id "org.ec4j.editorconfig" version "0.0.3"
 }
 
-// apply plugin: 'com.viafoura.plugins.vfpipe-version'
+apply plugin: 'com.viafoura.plugins.vfpipe-version'
 
 allprojects {
+    apply plugin: "java"
+    apply plugin: "jacoco"
+
     group = 'com.viafoura.template.microservice'
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
@@ -61,50 +64,111 @@ allprojects {
             }
         }
     }
+
+    task junitTests(type: Test) {
+        useJUnitPlatform {
+        }
+        finalizedBy jacocoTestReport
+    }
+
+    test.dependsOn(junitTests)
+
+    jacoco {
+        toolVersion = "0.8.8"
+        reportsDirectory = file("$rootDir/build/reports/jacoco/$name")
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.required = true
+        }
+        // the test execution data file (usually test.exec)
+        getExecutionData().setFrom(fileTree(buildDir).include("/jacoco/*.exec"))
+    }
+
+    // Code Coverage check task
+    jacocoTestCoverageVerification {
+        executionData(
+                fileTree(buildDir).include("/jacoco/integrationTests.exec"),
+                fileTree(buildDir).include("/jacoco/junitTests.exec")
+        )
+        violationRules {
+            failOnViolation = true
+            rule {
+                element = "PACKAGE"
+                includes = ["com.viafoura.template.microservice.*","com.viafoura.template.microservice.infra.vertx.api"]
+                excludes = [
+                        "com.viafoura.template.microservice.infra.config",
+                        "com.viafoura.template.microservice.infra.stream",
+                        "com.viafoura.template.microservice.infra.metric",
+                        "com.viafoura.template.microservice.infra.vertx",
+                        "com.viafoura.template.microservice.infra.vertx.error",
+                        "com.viafoura.template.microservice.infra.vertx.verticle",
+                        "com.viafoura.template.microservice.infra.vertx.event",
+                        "com.viafoura.template.microservice.infra.vertx.security",
+                ]
+                limit {
+                    counter = "LINE"
+                    value = "COVEREDRATIO"
+                    minimum = 0.65
+                }
+            }
+        }
+    }
 }
+
+task installGitHooks(type: Copy) {
+    from new File(rootProject.rootDir, "scripts/pre-push")
+    into { new File(rootProject.rootDir, ".git/hooks") }
+    fileMode 0775 // https://chmodcommand.com/chmod-0775/
+}
+
+build.dependsOn installGitHooks
+
 
 dependencies {
     implementation libs.guice
+    implementation libs.kafkaClients
+    implementation libs.kafkaStreams
+    implementation libs.lombok
+    implementation libs.micrometerCore
+    implementation libs.micrometerJmxRegistry
+    implementation libs.micrometerJvmExtras
+    implementation libs.micrometerPrometheusRegistry
+    implementation libs.micrometerStatsdRegistry
+    implementation libs.rxjava2
+    implementation libs.slf4jApi
+    implementation libs.typesafeConfig
     implementation libs.vertxCore
     implementation libs.vertxMetrics
     implementation libs.vertxRxjava2
-    implementation libs.slf4jApi
-    implementation libs.lombok
-    implementation libs.rxjava2
-    implementation libs.typesafeConfig
-    implementation libs.micrometerCore
-    implementation libs.micrometerJmxRegistry
-    implementation libs.micrometerPrometheusRegistry
-    implementation libs.micrometerJvmExtras
-    implementation libs.micrometerStatsdRegistry
-    implementation libs.viafouraCommonVertx
     implementation libs.vertxWeb
     implementation libs.vertxWebApiContract
     implementation libs.viafouraCommonFramework
+    implementation libs.viafouraCommonVertx
     implementation libs.viafouraCommonVertxKafka
-    implementation libs.kafkaClients
-    implementation libs.kafkaStreams
 
     annotationProcessor libs.lombok
 
     testImplementation libs.mockito
     testImplementation libs.junitJupiter
+    testImplementation libs.vertxJunit5
 }
 
-setMainClassName('com.viafoura.template.microservice.infra.runner.ApplicationLauncher')
+setMainClassName('com.viafoura.template.microservice.infra.vertx.ApplicationLauncher')
 
 run {
-    args = ['run', 'com.viafoura.template.microservice.infra.runner.verticle.MainVerticle']
+    args = ['run', 'com.viafoura.template.microservice.infra.vertx.verticle.MainVerticle']
 }
 
 shadowJar {
-    setArchivesBaseName('moderation-orchestrator-service')
+    setArchivesBaseName('java-template-service')
     setArchiveClassifier('fat')
 
     manifest {
         attributes(
-                'Main-Verticle': 'com.viafoura.template.microservice.infra.runner.verticle.MainVerticle',
-                'Main-Class': 'com.viafoura.template.microservice.infra.runner.ApplicationLauncher',
+                'Main-Verticle': 'com.viafoura.template.microservice.infra.vertx.verticle.MainVerticle',
+                'Main-Class': 'com.viafoura.template.microservice.infra.vertx.ApplicationLauncher',
                 'Class-Path': '../conf/',
                 'Multi-Release': 'true'
         )
