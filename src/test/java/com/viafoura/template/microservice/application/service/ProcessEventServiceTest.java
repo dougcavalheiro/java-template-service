@@ -3,9 +3,9 @@ package com.viafoura.template.microservice.application.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.viafoura.template.microservice.application.port.out.metrics.ApplicationMetricsPort;
-import com.viafoura.template.microservice.application.port.out.stream.MessagePublisherPort;
-import com.viafoura.template.microservice.domain.model.StreamEvent;
+import com.viafoura.template.microservice.application.port.output.metric.ApplicationMetricsPort;
+import com.viafoura.template.microservice.application.port.output.stream.MessagePublisherPort;
+import com.viafoura.template.microservice.domain.event.StreamEvent;
 import java.util.HashMap;
 import org.junit.jupiter.api.*;
 

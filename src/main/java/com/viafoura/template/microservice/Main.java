@@ -1,7 +1,7 @@
 package com.viafoura.template.microservice;
 
-import com.viafoura.template.microservice.infra.vertx.ApplicationLauncher;
-import com.viafoura.template.microservice.infra.vertx.verticle.MainVerticle;
+import com.viafoura.template.microservice.infrastructure.vertx.ApplicationLauncher;
+import com.viafoura.template.microservice.infrastructure.vertx.verticle.MainVerticle;
 
 public class Main {
 

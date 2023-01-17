@@ -1,7 +1,7 @@
 package com.viafoura.template.microservice.application.service;
 
-import com.viafoura.template.microservice.application.port.in.HealthCheckUseCase;
-import com.viafoura.template.microservice.application.port.out.metrics.ApplicationMetricsPort;
+import com.viafoura.template.microservice.application.port.input.HealthCheckUseCase;
+import com.viafoura.template.microservice.application.port.output.metric.ApplicationMetricsPort;
 import javax.inject.Inject;
 import lombok.RequiredArgsConstructor;
 

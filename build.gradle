@@ -96,16 +96,16 @@ allprojects {
             failOnViolation = true
             rule {
                 element = "PACKAGE"
-                includes = ["com.viafoura.template.microservice.*","com.viafoura.template.microservice.infra.vertx.api"]
+                includes = ["com.viafoura.template.microservice.*","com.viafoura.template.microservice.infrastructure.vertx.api"]
                 excludes = [
-                        "com.viafoura.template.microservice.infra.config",
-                        "com.viafoura.template.microservice.infra.stream",
-                        "com.viafoura.template.microservice.infra.metric",
-                        "com.viafoura.template.microservice.infra.vertx",
-                        "com.viafoura.template.microservice.infra.vertx.error",
-                        "com.viafoura.template.microservice.infra.vertx.verticle",
-                        "com.viafoura.template.microservice.infra.vertx.event",
-                        "com.viafoura.template.microservice.infra.vertx.security",
+                        "com.viafoura.template.microservice.infrastructure.config",
+                        "com.viafoura.template.microservice.infrastructure.stream",
+                        "com.viafoura.template.microservice.infrastructure.metric",
+                        "com.viafoura.template.microservice.infrastructure.vertx",
+                        "com.viafoura.template.microservice.infrastructure.vertx.error",
+                        "com.viafoura.template.microservice.infrastructure.vertx.verticle",
+                        "com.viafoura.template.microservice.infrastructure.vertx.event",
+                        "com.viafoura.template.microservice.infrastructure.vertx.security",
                 ]
                 limit {
                     counter = "LINE"
@@ -155,10 +155,10 @@ dependencies {
     testImplementation libs.vertxJunit5
 }
 
-setMainClassName('com.viafoura.template.microservice.infra.vertx.ApplicationLauncher')
+setMainClassName('com.viafoura.template.microservice.infrastructure.vertx.ApplicationLauncher')
 
 run {
-    args = ['run', 'com.viafoura.template.microservice.infra.vertx.verticle.MainVerticle']
+    args = ['run', 'com.viafoura.template.microservice.infrastructure.vertx.verticle.MainVerticle']
 }
 
 shadowJar {
@@ -167,8 +167,8 @@ shadowJar {
 
     manifest {
         attributes(
-                'Main-Verticle': 'com.viafoura.template.microservice.infra.vertx.verticle.MainVerticle',
-                'Main-Class': 'com.viafoura.template.microservice.infra.vertx.ApplicationLauncher',
+                'Main-Verticle': 'com.viafoura.template.microservice.infrastructure.vertx.verticle.MainVerticle',
+                'Main-Class': 'com.viafoura.template.microservice.infrastructure.vertx.ApplicationLauncher',
                 'Class-Path': '../conf/',
                 'Multi-Release': 'true'
         )

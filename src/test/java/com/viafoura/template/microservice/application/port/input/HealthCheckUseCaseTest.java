@@ -1,25 +1,26 @@
-package com.viafoura.template.microservice.application.service;
+package com.viafoura.template.microservice.application.port.input;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.viafoura.template.microservice.application.port.output.metric.ApplicationMetricsPort;
+import com.viafoura.template.microservice.application.service.HealthCheckService;
 import org.junit.jupiter.api.*;
 
-class HealthCheckServiceTest {
+class HealthCheckUseCaseTest {
 
     private final ApplicationMetricsPort applicationMetricsPort = mock(ApplicationMetricsPort.class);
 
-    private HealthCheckService healthCheckService;
+    private HealthCheckUseCase healthCheckUseCase;
 
     @BeforeEach
     void setup() {
-        healthCheckService = new HealthCheckService(applicationMetricsPort);
+        healthCheckUseCase = new HealthCheckService(applicationMetricsPort);
     }
 
     @Test
-    void givenService_whenIsHealthy_thenSuccess() {
-        assertTrue(healthCheckService.isHealthy());
+    void givenHealthyService_whenHealthy_thenSuccess() {
+        assertTrue(healthCheckUseCase.isHealthy());
         verify(applicationMetricsPort, times(1)).incrementHealthyCalls();
     }
 }
