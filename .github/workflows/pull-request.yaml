@@ -1,9 +1,9 @@
 name: Label-check workflow
 
 on:
-  push:
-    branches:
-      - 'main'
+  pull_request:
+    types:
+      - closed
 
 permissions:
   contents: write
@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     env:
       BUMP_VERSION: 'patch'
