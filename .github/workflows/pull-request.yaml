@@ -1,0 +1,33 @@
+name: Label-check workflow
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BUMP_VERSION: 'patch'
+
+  steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.sha }}
+        fetch-depth: '0'
+
+    - name: Check scope:minor tag
+      if: contains(github.event.pull_request.labels.*.name, 'scope:minor')
+      run: echo "BUMP_VERSION=minor" >> $GITHUB_ENV
+
+    - name: Check scope:major tag
+      if: contains(github.event.pull_request.labels.*.name, 'scope:major')
+      run: echo "BUMP_VERSION=major" >> $GITHUB_ENV
+
+    - name: Bump version and push tag
+      id: tag
+      uses: anothrNick/github-tag-action@1.55.0
+      env:
+        DEFAULT_BUMP: ${{env.BUMP_VERSION}}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
