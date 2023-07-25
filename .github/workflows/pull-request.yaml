@@ -6,7 +6,6 @@ on:
 permissions:
   contents: write
   id-token: write
-  #pull-requests: read
 
 jobs:
   build:
@@ -21,11 +20,11 @@ jobs:
           fetch-depth: '0'
 
       - name: Check scope:minor tag
-        if: contains(github.event.pull_request.labels.*.name, 'scope:minor')
+        if: "contains(github.event.pull_request.labels.*.name, 'scope:minor')"
         run: echo "BUMP_VERSION=minor" >> $GITHUB_ENV
 
       - name: Check scope:major tag
-        if: contains(github.event.pull_request.labels.*.name, 'scope:major')
+        if: "contains(github.event.pull_request.labels.*.name, 'scope:major')"
         run: echo "BUMP_VERSION=major" >> $GITHUB_ENV
 
       - name: Bump version and push tag
