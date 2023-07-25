@@ -107,5 +107,3 @@ Some improvements/changes are welcome in this project such as:
 - Integration tests
 
 Just keep in mind that this is a template service, we must try to keep the minimal and most used functionalities to serve as a quick startup way for a new java service.
-
-hello
